@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <Version>1.0.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>A library to aid writing source generators.</Description>
   </PropertyGroup>
 
   <PropertyGroup Label="PackageSettings">
@@ -16,8 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup Label="PackageItems">
-    <None Include="Properties\icon.png" Pack="true" PackagePath="\" Visible="false" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="Properties\Dnet.SourceGenerators.targets" Pack="true" PackagePath="build" Visible="false" />
+    <None Include="Properties\icon.png" Pack="true" PackagePath="" Visible="false" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 
   <PropertyGroup Label="DebugProjectSettings" Condition="'$(Configuration)' == 'Debug'">
