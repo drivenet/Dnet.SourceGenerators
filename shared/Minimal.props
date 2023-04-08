@@ -1,0 +1,64 @@
+﻿<Project>
+  <PropertyGroup Label="TopLevelPathDefaults">
+    <DnetSharedPath Condition="'$(DnetSharedPath)' == ''">$(MSBuildThisFileDirectory)</DnetSharedPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="AvailableTargetFrameworks">
+    <LegacyTargetFramework>net472</LegacyTargetFramework>
+    <LegacyTargetFrameworkVersion>v4.7.2</LegacyTargetFrameworkVersion>
+    <LibraryTargetFramework>netstandard2.0</LibraryTargetFramework>
+    <ApplicationTargetFramework>net6.0</ApplicationTargetFramework>
+    <GeneratorTargetFramework>net472</GeneratorTargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="MinimalProjectSettings">
+    <Authors>DRIVE.NET, Inc.</Authors>
+    <Product>DRIVE.NET, Inc. projects</Product>
+    <Copyright>Copyright © DRIVE.NET, Inc.</Copyright>
+    <Description>-</Description>
+    <NeutralLanguage>en</NeutralLanguage>
+    <LangVersion>latest</LangVersion>
+    <Configurations>$(Configurations);Integration</Configurations>
+    <DebugType>embedded</DebugType>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <WarningsAsErrors>$(WarningsAsErrors);CS8073;nullable</WarningsAsErrors>
+    <MSBuildWarningsAsErrors>CS8785</MSBuildWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <ShowMessageForImplicitlySkipAnalyzers>false</ShowMessageForImplicitlySkipAnalyzers>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup Label="DevelopmentProjectSettings" Condition="'$(Configuration)' != 'Integration'">
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Label="ProductionProjectSettings" Condition="'$(Configuration)' != 'Debug'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Label="IntegrationProjectSettings" Condition="'$(Configuration)' == 'Integration'">
+    <Optimize>true</Optimize>
+    <NoWarn>$(NoWarn);SA1107;SA1116;SA1117;SA1201;SA1202;SA1203;SA1214;SA1402;SA1649</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Label="MinimalAnalyzerFiles">
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json">
+      <Link>stylecop.json</Link>
+      <Visible>false</Visible>
+    </AdditionalFiles>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\CodeMetricsConfig.txt">
+      <Link>CodeMetricsConfig.txt</Link>
+      <Visible>false</Visible>
+    </AdditionalFiles>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt">
+      <Link>BannedSymbols.Dnet.Shared.txt</Link>
+      <Visible>false</Visible>
+    </AdditionalFiles>
+  </ItemGroup>
+
+  <ItemGroup Label="MinimalAnalyzerReferences">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

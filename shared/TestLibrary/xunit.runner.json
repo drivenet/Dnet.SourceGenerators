@@ -1,0 +1,4 @@
+﻿{
+  "preEnumerateTheories": false,
+  "parallelizeTestCollections": false,
+}

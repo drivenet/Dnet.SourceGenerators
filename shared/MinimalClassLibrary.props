@@ -1,0 +1,18 @@
+﻿<Project>
+  <Import Project="Default.props" />
+
+  <PropertyGroup Label="ClassLibraryTargetFrameworks">
+    <DefaultTargetFramework>$(LegacyTargetFramework)</DefaultTargetFramework>
+    <NewTargetFramework>$(LibraryTargetFramework)</NewTargetFramework>
+    <NewTargetFrameworks>$(LibraryTargetFramework);$(ApplicationTargetFramework)</NewTargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup Label="TestInternalsVisibleTo">
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+        <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+        <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

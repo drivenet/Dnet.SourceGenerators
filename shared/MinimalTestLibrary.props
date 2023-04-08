@@ -1,0 +1,25 @@
+﻿<Project>
+  <Import Project="Minimal.props" />
+
+  <PropertyGroup Label="AvailableTestLibraryTargetFrameworks">
+    <DefaultTargetFramework>$(LegacyTargetFramework)</DefaultTargetFramework>
+    <DefaultTargetFrameworks>$(ApplicationTargetFramework);$(DefaultTargetFramework)</DefaultTargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Label="MinimalTestLibraryProjectSettings">
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);IDE0060;SA1131;SA1133;SA1201;SA1202;CA1034;CA1062;CA1801;CA1815;CA1822;CA2007;CA2016;CA5394;CS0618</NoWarn>
+    <DefineConstants>$(DefineConstants);NULLABLE_ATTRIBUTES_DISABLE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Label="MinimalTestPackageReferences">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+  </ItemGroup>
+
+  <ItemGroup Label="MinimalTestConfigFiles">
+    <None Include="$(MSBuildThisFileDirectory)\TestLibrary\xunit.runner.json" Visible="false" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
