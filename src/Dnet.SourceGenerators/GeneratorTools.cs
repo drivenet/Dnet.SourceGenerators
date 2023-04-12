@@ -198,6 +198,7 @@ public static class GeneratorTools
     /// </summary>
     /// <param name="exception">The unhandled exception.</param>
     /// <param name="location">The location where exception could occur.</param>
+    /// <param name="target">The target for contextful exception.</param>
     ///
     /// <returns>The diagnostic.</returns>
     public static Diagnostic CreateExceptionDiagnostic(Exception exception, Location? location, object? target = null)
