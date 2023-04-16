@@ -4,6 +4,7 @@
   <PropertyGroup Label="SourceGeneratorProjectSettings">
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsRoslynComponent>true</IsRoslynComponent>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
   <PropertyGroup Label="DebugProjectSettings" Condition="'$(Configuration)' == 'Debug'">
