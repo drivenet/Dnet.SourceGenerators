@@ -13,7 +13,7 @@ using static System.FormattableString;
 
 namespace Dnet.SourceGenerators.Examples;
 
-internal sealed class ConstructorBuilder : ISourceBuilder<TypeTarget>
+internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
 {
     private readonly StringBuilder _buffer = new();
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyCollection<IFieldSymbol>> _fieldCache = new(SymbolEqualityComparer.IncludeNullability);
@@ -21,20 +21,15 @@ internal sealed class ConstructorBuilder : ISourceBuilder<TypeTarget>
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyList<IReadOnlyCollection<ConstructorParameter>>> _signaturesCache = new(SymbolEqualityComparer.IncludeNullability);
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyList<IReadOnlyCollection<ConstructorParameter>>> _localSignaturesCache = new(SymbolEqualityComparer.IncludeNullability);
 
-    public IEnumerable<BuildResult> Build(TypeTarget target, CancellationToken cancellationToken)
+    public IEnumerable<BuildResult> Build(ConstructorTarget target, CancellationToken cancellationToken)
     {
         yield return BuildCore(target, cancellationToken);
     }
 
-    private BuildResult BuildCore(TypeTarget target, CancellationToken cancellationToken)
+    private BuildResult BuildCore(ConstructorTarget target, CancellationToken cancellationToken)
     {
         var location = target.Declaration.GetLocation();
         var type = target.Type;
-        if (!type.IsReferenceType)
-        {
-            return new(Diagnostic.Create(ConstructorGeneratorDiagnostics.ValueTypesAreNotSupported, target.Declaration.Keyword.GetLocation(), type));
-        }
-
         if (!target.Declaration.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
         {
             return new(Diagnostic.Create(GeneratorDiagnostics.MissingPartialKeyword, target.Declaration.Keyword.GetLocation(), type));

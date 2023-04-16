@@ -31,7 +31,7 @@ internal sealed class GenerateConstructorAttribute : Attribute
     {
         get
         {
-            yield return CommonGenerators.SymbolTargeted<TypeTarget, ConstructorBuilder>(NodePredicate, TargetFactory);
+            yield return CommonGenerators.SymbolTargeted<ConstructorTarget, ConstructorBuilder>(NodePredicate, TargetFactory);
             yield return CommonGenerators.ExtraSources(AttributeSourceInfo);
         }
     }
@@ -47,7 +47,7 @@ internal sealed class GenerateConstructorAttribute : Attribute
             && !GeneratorTools.ContainsErrors(attribute)
             && attribute.Parent?.Parent is ClassDeclarationSyntax;
 
-    private static TypeTarget? TargetFactory(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    private static ConstructorTarget? TargetFactory(GeneratorSyntaxContext context, CancellationToken cancellationToken)
     {
         var declaration = (ClassDeclarationSyntax)context.Node.Parent!.Parent!;
         return context.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken) is INamedTypeSymbol type
