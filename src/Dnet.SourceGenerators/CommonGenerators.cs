@@ -77,6 +77,45 @@ public static class CommonGenerators
         });
     }
 
+    /// <summary>
+    ///     Creates a generator that targets a syntax node marked with an attribute with the specified name.
+    /// </summary>
+    ///
+    /// <typeparam name="TTarget">The generator target type.</typeparam>
+    /// <typeparam name="TBuilder">The generator builder type.</typeparam>
+    ///
+    /// <param name="fullyQualifiedMetadataName">A fully-qualified, metadata name of the attribute, including <c>Attribute</c> suffix.
+    /// For example <c>"System.CLSCompliantAttribute</c> for <see cref="System.CLSCompliantAttribute"/>.</param>
+    /// <param name="nodePredicate">The syntax node predicate.</param>
+    /// <param name="targetFactory">The generator target factor.</param>
+    ///
+    /// <returns>An implementation of a generator that builds source from specific syntax nodes.</returns>
+    public static IIncrementalGenerator SymbolTargetedWithAttribute<TTarget, TBuilder>(
+        string fullyQualifiedMetadataName,
+        Predicate<SyntaxNode> nodePredicate,
+        Func<GeneratorAttributeSyntaxContext, CancellationToken, TTarget?> targetFactory)
+        where TTarget : class, ISyntaxGeneratorTarget, ISymbolGeneratorTarget
+        where TBuilder : class, ISourceBuilder<TTarget>, new()
+    {
+        if (nodePredicate is null)
+        {
+            throw new ArgumentNullException(nameof(nodePredicate));
+        }
+
+        if (targetFactory is null)
+        {
+            throw new ArgumentNullException(nameof(targetFactory));
+        }
+
+        return new ActionAdaptingGenerator(context =>
+        {
+            var pipeline = CommonProviders.TargetsWithAttribute(context, fullyQualifiedMetadataName, nodePredicate, targetFactory, SymbolGeneratorTargetComparer.Instance)
+                .Combine(CommonProviders.CompilationCached<TBuilder>(context))
+                .WithComparer(SyntaxGeneratorTargetPipelineComparer<TTarget, TBuilder>.Instance);
+            context.RegisterSourceOutput(pipeline, Build);
+        });
+    }
+
     private static void AddSources(IncrementalGeneratorPostInitializationContext context, IEnumerable<SourceInfo> sources)
     {
         foreach (var result in sources)
