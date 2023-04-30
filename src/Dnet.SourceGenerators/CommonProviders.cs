@@ -64,7 +64,7 @@ public static class CommonProviders
     ///
     /// <param name="context">The generator initialization context.</param>
     /// <param name="fullyQualifiedMetadataName">A fully-qualified, metadata name of the attribute, including <c>Attribute</c> suffix.
-    /// For example <c>"System.CLSCompliantAttribute</c> for <see cref="System.CLSCompliantAttribute"/>.</param>
+    /// For example <c>System.CLSCompliantAttribute</c> for <see cref="CLSCompliantAttribute"/>.</param>
     /// <param name="nodePredicate">The syntax node predicate.</param>
     /// <param name="targetFactory">The generator target factory.</param>
     /// <param name="comparer">The generator target comparer.</param>
