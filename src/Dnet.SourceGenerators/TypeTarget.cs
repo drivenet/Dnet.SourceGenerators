@@ -12,6 +12,6 @@ namespace Dnet.SourceGenerators;
 public record TypeTarget(
     TypeDeclarationSyntax Declaration,
     INamedTypeSymbol Type)
-    : DeclaredSymbolTarget<TypeDeclarationSyntax, INamedTypeSymbol>(Declaration, Type)
+    : TypeTarget<TypeDeclarationSyntax>(Declaration, Type)
 {
 }
