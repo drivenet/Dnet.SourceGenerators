@@ -26,9 +26,9 @@ public sealed class BuildResult
     /// <param name="name">The result name.</param>
     /// <param name="text">The source text.</param>
     public BuildResult(string name, SourceText text)
+        : this(text)
     {
         _name = name ?? throw new ArgumentNullException(nameof(name));
-        _text = text ?? throw new ArgumentNullException(nameof(text));
     }
 
     /// <summary>
@@ -39,6 +39,27 @@ public sealed class BuildResult
     public BuildResult(SourceText text)
     {
         _text = text ?? throw new ArgumentNullException(nameof(text));
+    }
+
+    /// <summary>
+    ///     Initializes an instance of a <see cref="BuildResult"/>, representing a successful named build result with default settings.
+    /// </summary>
+    ///
+    /// <param name="name">The result name.</param>
+    /// <param name="text">The source text.</param>
+    public BuildResult(string name, string text)
+        : this(name, SourceText.From(text, SourceInfo.DefaultEncoding))
+    {
+    }
+
+    /// <summary>
+    ///     Initializes an instance of a <see cref="BuildResult"/>, representing a successful unnamed build result with default settings.
+    /// </summary>
+    ///
+    /// <param name="text">The source text.</param>
+    public BuildResult(string text)
+        : this(SourceText.From(text, SourceInfo.DefaultEncoding))
+    {
     }
 
     /// <summary>

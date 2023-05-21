@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 using Microsoft.CodeAnalysis.Text;
 
@@ -14,6 +15,22 @@ namespace Dnet.SourceGenerators;
 /// <exception cref="ArgumentOutOfRangeException">The source file name is empty.</exception>
 public sealed record SourceInfo(string Name, SourceText Text)
 {
+    /// <summary>
+    ///     Represents a preferred default encoding for source texts.
+    /// </summary>
+    public static readonly Encoding DefaultEncoding = new UTF8Encoding(true, false);
+
+    /// <summary>
+    ///     Initializes an instance of <see cref="SourceInfo"/> with default settings.
+    /// </summary>
+    ///
+    /// <param name="name">The source file name.</param>
+    /// <param name="text">The source text.</param>
+    public SourceInfo(string name, string text)
+        : this(name, SourceText.From(text, DefaultEncoding))
+    {
+    }
+
     /// <summary>
     ///     The source file name.
     /// </summary>
