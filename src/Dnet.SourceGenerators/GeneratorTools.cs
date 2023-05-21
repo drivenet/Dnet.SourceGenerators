@@ -266,7 +266,7 @@ public static class GeneratorTools
             return false;
         }
 
-        accessibility = GeneratorTools.GetTopLevelAccessibility(type);
+        accessibility = GetTopLevelAccessibility(type);
         if (accessibility is null)
         {
             error = Diagnostic.Create(GeneratorDiagnostics.InvalidTopLevelTypeAccessibility, location, type);
