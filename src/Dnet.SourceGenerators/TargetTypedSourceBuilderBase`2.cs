@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Dnet.SourceGenerators;
 
 /// <summary>
-///     Represents a base for a source builder that extends a type.
+///     Represents a base for a source builder that targets a type.
 /// </summary>
 ///
 /// <typeparam name="TTarget">The target type.</typeparam>
@@ -17,6 +17,26 @@ public abstract class TargetTypedSourceBuilderBase<TTarget, TDeclaration> : ISou
     where TTarget : DeclaredSymbolTarget<TDeclaration, INamedTypeSymbol>
     where TDeclaration : TypeDeclarationSyntax
 {
+    private readonly bool _extendType;
+
+    /// <summary>
+    ///     Initializes an instance of <see cref="TargetTypedSourceBuilderBase{TTarget, TDeclaration}"/> with default settings.
+    /// </summary>
+    protected TargetTypedSourceBuilderBase()
+        : this(true)
+    {
+    }
+
+    /// <summary>
+    ///     Initializes an instance of <see cref="TargetTypedSourceBuilderBase{TTarget, TDeclaration}"/>.
+    /// </summary>
+    ///
+    /// <param name="extendType"><c>true</c> to check for type's extensibility; elseway <c>false</c>.</param>
+    protected TargetTypedSourceBuilderBase(bool extendType)
+    {
+        _extendType = extendType;
+    }
+
     /// <summary>
     ///     The string builder used to build the source.
     /// </summary>
@@ -25,10 +45,24 @@ public abstract class TargetTypedSourceBuilderBase<TTarget, TDeclaration> : ISou
     /// <inheritdoc/>
     public IEnumerable<BuildResult> Build(TTarget target, CancellationToken cancellationToken)
     {
-        if (!GeneratorTools.TryExtend(target, out var accessibility, out var error))
+        string? accessibility;
+        if (_extendType)
         {
-            yield return new(error);
-            yield break;
+            if (!GeneratorTools.TryExtend(target, out accessibility, out var error))
+            {
+                yield return new(error);
+                yield break;
+            }
+        }
+        else
+        {
+            var type = target.Type;
+            accessibility = GeneratorTools.GetTopLevelAccessibility(type);
+            if (accessibility is null)
+            {
+                yield return new(Diagnostic.Create(GeneratorDiagnostics.InvalidTopLevelTypeAccessibility, target.Declaration.GetLocation(), type));
+                yield break;
+            }
         }
 
         Builder.Clear();
