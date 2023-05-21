@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -218,6 +219,62 @@ public static class GeneratorTools
             target,
             exception?.GetType(),
             exception?.Message);
+    }
+
+    /// <summary>
+    ///     Attempts to check type for extendability and reports a diagnostic if it is not.
+    /// </summary>
+    ///
+    /// <typeparam name="TDeclaration">The declaration node type.</typeparam>
+    ///
+    /// <param name="target">The declaration target.</param>
+    /// <param name="accessibility">The resulting type accessibility if the type is extendable; elseway <c>null</c>.</param>
+    /// <param name="error">An extendability error diagnostic if the type is non-extendable; elseway <c>null</c>.</param>
+    ///
+    /// <returns><c>true</c>, if the type is extendable; elseway <c>false</c>.</returns>
+    public static bool TryExtend<TDeclaration>(
+        DeclaredSymbolTarget<TDeclaration, INamedTypeSymbol> target,
+        [NotNullWhen(true)] out string? accessibility,
+        [MaybeNullWhen(false)] out Diagnostic? error)
+        where TDeclaration : TypeDeclarationSyntax
+    {
+        if (target is null)
+        {
+            throw new ArgumentNullException(nameof(target));
+        }
+
+        var location = target.Declaration.GetLocation();
+        var type = target.Type;
+        if (!target.Declaration.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+        {
+            accessibility = null;
+            error = Diagnostic.Create(GeneratorDiagnostics.MissingPartialKeyword, target.Declaration.Keyword.GetLocation(), type);
+            return false;
+        }
+
+        if (target.Type.ContainingNamespace is null)
+        {
+            accessibility = null;
+            error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Type);
+            return false;
+        }
+
+        if (type.ContainingType is not null)
+        {
+            accessibility = null;
+            error = Diagnostic.Create(GeneratorDiagnostics.ContainedTypesAreNotSupported, location, type);
+            return false;
+        }
+
+        accessibility = GeneratorTools.GetTopLevelAccessibility(type);
+        if (accessibility is null)
+        {
+            error = Diagnostic.Create(GeneratorDiagnostics.InvalidTopLevelTypeAccessibility, location, type);
+            return false;
+        }
+
+        error = null;
+        return true;
     }
 
     private static void ReportExceptionDiagnostic(SourceProductionContext context, Exception exception, Func<Exception, Diagnostic> diagnosticFactory)
