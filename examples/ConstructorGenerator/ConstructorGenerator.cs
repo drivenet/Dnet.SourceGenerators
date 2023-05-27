@@ -1,21 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Dnet.SourceGenerators.Examples;
 
 [Generator]
 internal sealed class ConstructorGenerator : CompositeGeneratorBase
 {
-    private const string AttributeShortName = "GenerateConstructor";
-    private const string AttributeFullName = AttributeShortName + "Attribute";
-    private const string AttributeTypeName = "System." + AttributeFullName;
+    private const string AttributeTypeName = "System.GenerateConstructorAttribute";
 
     private const string AttributeSource = @"namespace System;
 
@@ -25,34 +20,24 @@ internal sealed class GenerateConstructorAttribute : Attribute
 }
 ";
 
-    private static readonly SourceInfo AttributeSourceInfo = new(AttributeFullName, SourceText.From(AttributeSource, Encoding.UTF8));
+    private static readonly SourceInfo AttributeSourceInfo = new(AttributeTypeName, AttributeSource);
 
     protected override IEnumerable<IIncrementalGenerator> Inner
     {
         get
         {
-            yield return CommonGenerators.SymbolTargeted<ConstructorTarget, ConstructorBuilder>(NodePredicate, TargetFactory);
+            yield return CommonGenerators.SymbolTargetedWithAttribute<TypeTarget<ClassDeclarationSyntax>, ConstructorBuilder>(AttributeTypeName, NodePredicate, TargetFactory);
             yield return CommonGenerators.ExtraSources(AttributeSourceInfo);
         }
     }
 
     internal static bool IsValid(INamedTypeSymbol type)
         => type.GetAttributes()
-            .FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString(NullableFlowState.None, DisplayFormats.Local) == AttributeTypeName)
-            is { } attributeData;
+            .Any(attr => attr.AttributeClass?.ToDisplayString(NullableFlowState.None, DisplayFormats.Local) == AttributeTypeName);
 
     private static bool NodePredicate(SyntaxNode node)
-        => node is AttributeSyntax attribute
-            && GeneratorTools.GetNameText(attribute.Name) is AttributeShortName or AttributeFullName
-            && !GeneratorTools.ContainsErrors(attribute)
-            && attribute.Parent?.Parent is ClassDeclarationSyntax;
+        => node is ClassDeclarationSyntax;
 
-    private static ConstructorTarget? TargetFactory(GeneratorSyntaxContext context, CancellationToken cancellationToken)
-    {
-        var declaration = (ClassDeclarationSyntax)context.Node.Parent!.Parent!;
-        return context.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken) is INamedTypeSymbol type
-            && IsValid(type)
-            ? new(declaration, type)
-            : null;
-    }
+    private static TypeTarget<ClassDeclarationSyntax>? TargetFactory(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
+        => new((ClassDeclarationSyntax)context.TargetNode, (INamedTypeSymbol)context.TargetSymbol);
 }

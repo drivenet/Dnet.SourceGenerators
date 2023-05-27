@@ -1,65 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 using static System.FormattableString;
 
 namespace Dnet.SourceGenerators.Examples;
 
-internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
+internal sealed class ConstructorBuilder : SimpleTargetTypedSourceBuilderBase<TypeTarget<ClassDeclarationSyntax>, ClassDeclarationSyntax>
 {
-    private readonly StringBuilder _buffer = new();
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyCollection<IFieldSymbol>> _fieldCache = new(SymbolEqualityComparer.IncludeNullability);
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyCollection<IPropertySymbol>> _propertyCache = new(SymbolEqualityComparer.IncludeNullability);
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyList<IReadOnlyCollection<ConstructorParameter>>> _signaturesCache = new(SymbolEqualityComparer.IncludeNullability);
     private readonly Dictionary<INamedTypeSymbol, IReadOnlyList<IReadOnlyCollection<ConstructorParameter>>> _localSignaturesCache = new(SymbolEqualityComparer.IncludeNullability);
 
-    public IEnumerable<BuildResult> Build(ConstructorTarget target, CancellationToken cancellationToken)
+    protected override BuildResult BuildSource(TypeTarget<ClassDeclarationSyntax> target, string accessibility, CancellationToken cancellationToken)
     {
-        yield return BuildCore(target, cancellationToken);
-    }
-
-    private BuildResult BuildCore(ConstructorTarget target, CancellationToken cancellationToken)
-    {
-        var location = target.Declaration.GetLocation();
         var type = target.Type;
-        if (!target.Declaration.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-        {
-            return new(Diagnostic.Create(GeneratorDiagnostics.MissingPartialKeyword, target.Declaration.Keyword.GetLocation(), type));
-        }
-
-        if (target.Type.ContainingNamespace is null)
-        {
-            return new(Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Type));
-        }
-
-        if (type.ContainingType is not null)
-        {
-            return new(Diagnostic.Create(GeneratorDiagnostics.ContainedTypesAreNotSupported, location, type));
-        }
-
-        if (GeneratorTools.GetTopLevelAccessibility(type) is not { } accessibility)
-        {
-            return new(Diagnostic.Create(GeneratorDiagnostics.InvalidTopLevelTypeAccessibility, location, type));
-        }
-
         var baseType = type.BaseType ?? throw new InvalidOperationException(Invariant($"Unexpected missing base type for reference type {type}."));
-        var isLocalBaseType = !baseType.DeclaringSyntaxReferences.IsDefaultOrEmpty
-            && ConstructorGenerator.IsValid(baseType);
-        var ctorSignatures = GetSignatures(baseType, isLocalBaseType, cancellationToken);
+        var ctorSignatures = GetSignatures(baseType, cancellationToken);
         var baseParameters = ctorSignatures.Count != 0
             ? ctorSignatures[0]
             : Array.Empty<ConstructorParameter>();
         if (ctorSignatures.Count > 1
             && baseParameters.Count == ctorSignatures[1].Count)
         {
+            var location = target.Declaration.GetLocation();
             return new(Diagnostic.Create(ConstructorGeneratorDiagnostics.MultiplePreferredConstructors, location, baseType));
         }
 
@@ -72,8 +42,7 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
             return BuildResult.Empty;
         }
 
-        var text = SourceText.From(Build(type, accessibility, baseParameters, fields, properties), Encoding.Unicode);
-        return new(text);
+        return new(Build(type, accessibility, baseParameters, fields, properties));
     }
 
     private string Build(
@@ -83,24 +52,23 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
         IReadOnlyCollection<IFieldSymbol> fields,
         IReadOnlyCollection<IPropertySymbol> properties)
     {
-        _buffer.Clear();
         var typeNamespace = type.ContainingNamespace.ToString();
         var typeName = type.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.MinimallyQualifiedFormat);
         EmitUsings();
         EmitPrologue(accessibility, typeNamespace, typeName);
         EmitCtor(type, baseParameters, fields, properties);
         EmitEpilogue();
-        return _buffer.ToString();
+        return Builder.ToString();
     }
 
     private void EmitUsings()
     {
-        _buffer.AppendLine("#nullable enable");
+        Builder.AppendLine("#nullable enable");
     }
 
     private void EmitPrologue(string accessibility, string typeNamespace, string typeName)
     {
-        _buffer.Append(Invariant($@"namespace {typeNamespace};
+        Builder.Append(Invariant($@"namespace {typeNamespace};
 
 #pragma warning disable CS0618 // Required if depending types are obsolete
 
@@ -116,12 +84,12 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
     {
         var selfTypeName = type.ToDisplayString(NullableFlowState.NotNull, DisplayFormats.Self);
         var accessibility = type.IsAbstract ? "protected" : "public";
-        _buffer.Append(Invariant(@$"
+        Builder.Append(Invariant(@$"
     {accessibility} {selfTypeName}("));
         var argsCount = baseParameters.Count + fields.Count + properties.Count;
         if (argsCount > 1)
         {
-            _buffer.AppendLine();
+            Builder.AppendLine();
         }
 
         var isFirst = true;
@@ -133,15 +101,15 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
             var parameterTypeName = parameter.Type.ToDisplayString(DisplayFormats.Full);
             if (!isFirst)
             {
-                _buffer.AppendLine(",");
+                Builder.AppendLine(",");
             }
 
             if (argsCount > 1)
             {
-                _buffer.Append("        ");
+                Builder.Append("        ");
             }
 
-            _buffer.Append(Invariant($"{parameterTypeName} @{name}"));
+            Builder.Append(Invariant($"{parameterTypeName} @{name}"));
             isFirst = false;
         }
 
@@ -161,25 +129,25 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
             var typeName = argumentType.ToDisplayString(DisplayFormats.Full);
             if (!isFirst)
             {
-                _buffer.AppendLine(",");
+                Builder.AppendLine(",");
             }
 
             if (argsCount > 1)
             {
-                _buffer.Append("        ");
+                Builder.Append("        ");
             }
 
-            _buffer.Append(Invariant($"{typeName} @{name}"));
+            Builder.Append(Invariant($"{typeName} @{name}"));
             isFirst = false;
         }
 
-        _buffer.AppendLine(")");
+        Builder.AppendLine(")");
         if (baseArguments.Count > 0)
         {
-            _buffer.Append("        : base(");
+            Builder.Append("        : base(");
             if (baseArguments.Count > 1)
             {
-                _buffer.AppendLine();
+                Builder.AppendLine();
             }
 
             isFirst = true;
@@ -187,50 +155,51 @@ internal sealed class ConstructorBuilder : ISourceBuilder<ConstructorTarget>
             {
                 if (!isFirst)
                 {
-                    _buffer.AppendLine(",");
+                    Builder.AppendLine(",");
                 }
 
                 if (argsCount > 1)
                 {
-                    _buffer.Append("            ");
+                    Builder.Append("            ");
                 }
 
-                _buffer.Append('@');
-                _buffer.Append(name);
+                Builder.Append('@');
+                Builder.Append(name);
                 isFirst = false;
             }
 
-            _buffer.AppendLine(")");
+            Builder.AppendLine(")");
         }
 
-        _buffer.AppendLine("    {");
+        Builder.AppendLine("    {");
         foreach (var (argumentType, originalName, name) in arguments)
         {
-            _buffer.Append(Invariant($"        {originalName} = @{name}"));
+            Builder.Append(Invariant($"        {originalName} = @{name}"));
             if (GeneratorTools.IsNonNullableReferenceType(argumentType))
             {
-                _buffer.Append(Invariant($" ?? throw new System.ArgumentNullException(nameof(@{name}))"));
+                Builder.Append(Invariant($" ?? throw new global::System.ArgumentNullException(nameof(@{name}))"));
             }
 
-            _buffer.AppendLine(";");
+            Builder.AppendLine(";");
         }
 
-        _buffer.AppendLine("    }");
+        Builder.AppendLine("    }");
     }
 
     private void EmitEpilogue()
     {
-        _buffer.Append(@"}
+        Builder.Append(@"}
 ");
     }
 
-    private IReadOnlyList<IReadOnlyCollection<ConstructorParameter>> GetSignatures(INamedTypeSymbol type, bool isLocalType, CancellationToken cancellationToken)
+    private IReadOnlyList<IReadOnlyCollection<ConstructorParameter>> GetSignatures(INamedTypeSymbol type, CancellationToken cancellationToken)
     {
         if (type.SpecialType == SpecialType.System_Object)
         {
             return Array.Empty<IReadOnlyCollection<ConstructorParameter>>();
         }
 
+        var isLocalType = ConstructorGenerator.IsValid(type);
         var cache = isLocalType ? _localSignaturesCache : _signaturesCache;
         if (!cache.TryGetValue(type, out var list))
         {
