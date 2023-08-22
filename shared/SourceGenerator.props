@@ -3,6 +3,7 @@
 
   <PropertyGroup Label="SourceGeneratorProjectSettings">
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AnalyzerLanguage>cs</AnalyzerLanguage>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
