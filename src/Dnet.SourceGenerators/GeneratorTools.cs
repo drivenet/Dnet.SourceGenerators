@@ -79,7 +79,7 @@ public static class GeneratorTools
     ///
     /// <param name="type">The type to get accessibility for.</param>
     ///
-    /// <returns>The type accessibility or <c>null</c>, if the accesibility is incompatible with top-level types.</returns>
+    /// <returns>The type accessibility or <c>null</c>, if the accessibility is incompatible with top-level types.</returns>
     public static string? GetTopLevelAccessibility(ITypeSymbol type)
     {
         if (type is null)
