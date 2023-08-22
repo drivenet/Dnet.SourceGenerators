@@ -252,7 +252,7 @@ public static class GeneratorTools
             return false;
         }
 
-        if (target.Type.ContainingNamespace is null)
+        if (target.Type.ContainingNamespace is { IsGlobalNamespace: false })
         {
             accessibility = null;
             error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Type);
