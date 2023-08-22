@@ -142,7 +142,8 @@ public static class CommonGenerators
             exception => GeneratorTools.CreateExceptionDiagnostic(exception, target.SyntaxNode.GetLocation(), target),
             Enumerable.Empty<BuildResult>());
         var symbol = target.Symbol;
-        var defaultName = (symbol.ContainingNamespace?.ToString() ?? "_") + "." + symbol.MetadataName.Replace('`', '_');
+        var prefix = symbol.ContainingNamespace is { IsGlobalNamespace: true } ? "global_" : (symbol.ContainingNamespace?.ToString() ?? "_");
+        var defaultName = prefix + "." + symbol.MetadataName.Replace('`', '_');
         AddResults(context, results, defaultName);
     }
 
