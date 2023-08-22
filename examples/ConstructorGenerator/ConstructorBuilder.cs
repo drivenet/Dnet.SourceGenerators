@@ -270,7 +270,6 @@ internal sealed class ConstructorBuilder : SimpleTargetTypedSourceBuilderBase<Ty
             .Where(member =>
                 member.Kind == SymbolKind.Field
                 && !member.IsStatic
-                && member.IsDefinition
                 && !member.IsImplicitlyDeclared
                 && member.Name.StartsWith("_", StringComparison.Ordinal))
             .Cast<IFieldSymbol>()
@@ -288,7 +287,6 @@ internal sealed class ConstructorBuilder : SimpleTargetTypedSourceBuilderBase<Ty
                 member.Kind == SymbolKind.Property
                 && !member.IsStatic
                 && !member.IsAbstract
-                && member.IsDefinition
                 && !member.IsImplicitlyDeclared)
             .Cast<IPropertySymbol>()
             .Where(property =>
