@@ -21,7 +21,9 @@ public static class CommonGenerators
     /// <param name="sources">The extra sources to add.</param>
     ///
     /// <returns>An implementation of a generator that adds extra sources to the compilation.</returns>
+#pragma warning disable CA1859 // Future-proofing
     public static IIncrementalGenerator ExtraSources(IEnumerable<SourceInfo> sources)
+#pragma warning restore CA1859
     {
         if (sources is null)
         {
@@ -52,9 +54,11 @@ public static class CommonGenerators
     /// <param name="targetFactory">The generator target factor.</param>
     ///
     /// <returns>An implementation of a generator that builds source from specific syntax nodes.</returns>
+#pragma warning disable CA1859 // Future-proofing
     public static IIncrementalGenerator SymbolTargeted<TTarget, TBuilder>(
         Predicate<SyntaxNode> nodePredicate,
         Func<GeneratorSyntaxContext, CancellationToken, TTarget?> targetFactory)
+#pragma warning restore CA1859
         where TTarget : class, ISyntaxGeneratorTarget, ISymbolGeneratorTarget
         where TBuilder : class, ISourceBuilder<TTarget>, new()
     {
@@ -90,10 +94,12 @@ public static class CommonGenerators
     /// <param name="targetFactory">The generator target factor.</param>
     ///
     /// <returns>An implementation of a generator that builds source from specific syntax nodes.</returns>
+#pragma warning disable CA1859 // Future-proofing
     public static IIncrementalGenerator SymbolTargetedWithAttribute<TTarget, TBuilder>(
         string fullyQualifiedMetadataName,
         Predicate<SyntaxNode> nodePredicate,
         Func<GeneratorAttributeSyntaxContext, CancellationToken, TTarget?> targetFactory)
+#pragma warning restore CA1859
         where TTarget : class, ISyntaxGeneratorTarget, ISymbolGeneratorTarget
         where TBuilder : class, ISourceBuilder<TTarget>, new()
     {
