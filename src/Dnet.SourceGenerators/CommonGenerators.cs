@@ -161,7 +161,7 @@ public static class CommonGenerators
                         hintName = hintName + "." + name;
                     }
 
-                    context.AddSource(hintName, text);
+                    context.AddSource(hintName + ".g", text);
                 },
                 reportDiagnostic);
         }
