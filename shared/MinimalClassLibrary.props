@@ -8,11 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="TestInternalsVisibleTo">
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-        <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-        <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
-    </AssemblyAttribute>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 </Project>

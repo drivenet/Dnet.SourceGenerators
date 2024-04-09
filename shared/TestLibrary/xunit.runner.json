@@ -1,4 +1,5 @@
 ﻿{
   "preEnumerateTheories": false,
   "parallelizeTestCollections": false,
+  "shadowCopy": false,
 }
