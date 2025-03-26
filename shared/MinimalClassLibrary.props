@@ -3,8 +3,7 @@
 
   <PropertyGroup Label="ClassLibraryTargetFrameworks">
     <DefaultTargetFramework>$(LegacyTargetFramework)</DefaultTargetFramework>
-    <NewTargetFramework>$(LibraryTargetFramework)</NewTargetFramework>
-    <NewTargetFrameworks>$(LibraryTargetFramework);$(ApplicationTargetFramework)</NewTargetFrameworks>
+    <NewTargetFrameworks>$(LegacyTargetFramework);$(ApplicationTargetFramework)</NewTargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Label="TestInternalsVisibleTo">

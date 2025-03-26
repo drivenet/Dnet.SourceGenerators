@@ -1,6 +1,13 @@
 ﻿<Project>
   <Import Project="MinimalClassLibrary.props" />
 
+  <ItemGroup Label="ClassLibraryAnalyzerFiles">
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.Dnet.txt">
+      <Link>BannedSymbols.Dnet.Shared.txt</Link>
+      <Visible>false</Visible>
+    </AdditionalFiles>
+  </ItemGroup>
+
   <ItemGroup Label="ClassLibrarySourceGenerators">
     <ProjectReference Include="$(DnetLibPath)\Dnet.Core.Generators\Dnet.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
