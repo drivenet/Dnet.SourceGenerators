@@ -32,12 +32,12 @@ public abstract record DeclaredSymbolTarget<TDeclaration, TSymbol>(
     public TSymbol Type { get; } = Type ?? throw new ArgumentNullException(nameof(Type));
 
     /// <inheritdoc/>
-#pragma warning disable CA1033 // Interface methods should be callable by child types -- Type is more suitable
+#pragma warning disable CA1033 // Interface methods should be callable by child types -- not needed for record
     CSharpSyntaxNode ISyntaxGeneratorTarget.SyntaxNode => Declaration;
 #pragma warning restore CA1033 // Interface methods should be callable by child types
 
     /// <inheritdoc/>
-#pragma warning disable CA1033 // Interface methods should be callable by child types -- Type is more suitable
+#pragma warning disable CA1033 // Interface methods should be callable by child types -- not needed for record
     ISymbol ISymbolGeneratorTarget.Symbol => Type;
 #pragma warning restore CA1033 // Interface methods should be callable by child types
 }
