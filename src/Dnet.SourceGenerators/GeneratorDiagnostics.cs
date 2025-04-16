@@ -54,8 +54,8 @@ public static class GeneratorDiagnostics
     public static readonly DiagnosticDescriptor MissingPartialKeyword =
         new(
             "DN0003",
-            "Additive generated types must be partial",
-            "Add partial keyword to the type '{0}'",
+            "Additive generated code must be partial",
+            "Add partial keyword to the '{0}'",
             DiagnosticCategory,
             DiagnosticSeverity.Error,
             true);
