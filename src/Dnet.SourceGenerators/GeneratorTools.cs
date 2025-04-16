@@ -96,6 +96,31 @@ public static class GeneratorTools
     }
 
     /// <summary>
+    ///     Gets the top-level type accessibility.
+    /// </summary>
+    ///
+    /// <param name="symbol">The type to get accessibility for.</param>
+    ///
+    /// <returns>The type accessibility or <c>null</c>, if the accessibility is incompatible with top-level types.</returns>
+    public static string? GetMemberAccessibility(ISymbol symbol)
+    {
+        if (symbol is null)
+        {
+            throw new ArgumentNullException(nameof(symbol));
+        }
+
+        return symbol.DeclaredAccessibility switch
+        {
+            Accessibility.Public => "public",
+            Accessibility.Internal => "internal",
+            Accessibility.Private => "private",
+            Accessibility.ProtectedAndInternal => "private protected",
+            Accessibility.ProtectedOrInternal => "protected internal",
+            _ => null,
+        };
+    }
+
+    /// <summary>
     ///     Gets the name text from a name syntax node.
     /// </summary>
     ///
