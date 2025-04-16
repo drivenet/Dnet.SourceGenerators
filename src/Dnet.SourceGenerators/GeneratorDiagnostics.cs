@@ -95,4 +95,16 @@ public static class GeneratorDiagnostics
             DiagnosticCategory,
             DiagnosticSeverity.Error,
             true);
+
+    /// <summary>
+    ///     The diagnostic descriptor for invalid member accessibility.
+    /// </summary>
+    public static readonly DiagnosticDescriptor InvalidMemberAccessibility =
+        new(
+            "DN0007",
+            "Invalid member accessibility",
+            "Set the type '{0}' accessibility",
+            DiagnosticCategory,
+            DiagnosticSeverity.Error,
+            true);
 }
