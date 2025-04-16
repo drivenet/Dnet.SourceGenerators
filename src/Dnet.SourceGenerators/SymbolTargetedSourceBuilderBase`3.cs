@@ -27,7 +27,7 @@ public abstract class SymbolTargetedSourceBuilderBase<TTarget, TDeclaration, TSy
     /// <inheritdoc/>
     public IEnumerable<BuildResult> Build(TTarget target, CancellationToken cancellationToken)
     {
-        var type = target.Type as ITypeSymbol ?? target.Type.ContainingType;
+        var type = target.Symbol as ITypeSymbol ?? target.Symbol.ContainingType;
         var accessibility = GeneratorTools.GetTopLevelAccessibility(type);
         if (accessibility is null)
         {

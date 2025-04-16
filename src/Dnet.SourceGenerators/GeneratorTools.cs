@@ -267,16 +267,16 @@ public static class GeneratorTools
         }
 
         var location = target.Declaration.GetLocation();
-        var type = target.Type;
+        var type = target.Symbol;
         if (!target.Declaration.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
         {
             error = Diagnostic.Create(GeneratorDiagnostics.MissingPartialKeyword, target.Declaration.Keyword.GetLocation(), type);
             return false;
         }
 
-        if (target.Type.ContainingNamespace is not { IsGlobalNamespace: false })
+        if (target.Symbol.ContainingNamespace is not { IsGlobalNamespace: false })
         {
-            error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Type);
+            error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Symbol);
             return false;
         }
 
@@ -308,16 +308,16 @@ public static class GeneratorTools
         }
 
         var location = target.Declaration.GetLocation();
-        var method = target.Type;
+        var method = target.Symbol;
         if (!target.Declaration.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
         {
             error = Diagnostic.Create(GeneratorDiagnostics.MissingPartialKeyword, target.Declaration.GetLocation(), method);
             return false;
         }
 
-        if (target.Type.ContainingNamespace is not { IsGlobalNamespace: false })
+        if (target.Symbol.ContainingNamespace is not { IsGlobalNamespace: false })
         {
-            error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Type);
+            error = Diagnostic.Create(GeneratorDiagnostics.TopLevelTypesAreNotSupported, target.Declaration.Identifier.GetLocation(), target.Symbol);
             return false;
         }
 

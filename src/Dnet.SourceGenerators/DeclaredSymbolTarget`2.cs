@@ -13,10 +13,10 @@ namespace Dnet.SourceGenerators;
 /// <typeparam name="TSymbol">The declared symbol type.</typeparam>
 ///
 /// <param name="Declaration">The declaration syntax node.</param>
-/// <param name="Type">The declared symbol.</param>
+/// <param name="Symbol">The declared symbol.</param>
 public abstract record DeclaredSymbolTarget<TDeclaration, TSymbol>(
     TDeclaration Declaration,
-    TSymbol Type)
+    TSymbol Symbol)
     : ISyntaxGeneratorTarget, ISymbolGeneratorTarget
     where TDeclaration : CSharpSyntaxNode
     where TSymbol : class, ISymbol
@@ -29,7 +29,7 @@ public abstract record DeclaredSymbolTarget<TDeclaration, TSymbol>(
     /// <summary>
     ///     The declared symbol.
     /// </summary>
-    public TSymbol Type { get; } = Type ?? throw new ArgumentNullException(nameof(Type));
+    public TSymbol Symbol { get; } = Symbol ?? throw new ArgumentNullException(nameof(Symbol));
 
     /// <inheritdoc/>
 #pragma warning disable CA1033 // Interface methods should be callable by child types -- not needed for record
@@ -38,6 +38,6 @@ public abstract record DeclaredSymbolTarget<TDeclaration, TSymbol>(
 
     /// <inheritdoc/>
 #pragma warning disable CA1033 // Interface methods should be callable by child types -- not needed for record
-    ISymbol ISymbolGeneratorTarget.Symbol => Type;
+    ISymbol ISymbolGeneratorTarget.Symbol => Symbol;
 #pragma warning restore CA1033 // Interface methods should be callable by child types
 }
