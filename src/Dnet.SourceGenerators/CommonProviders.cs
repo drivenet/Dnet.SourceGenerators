@@ -13,19 +13,6 @@ namespace Dnet.SourceGenerators;
 public static class CommonProviders
 {
     /// <summary>
-    ///    Creates a provider that caches an arbitrary item.
-    /// </summary>
-    ///
-    /// <typeparam name="TItem">The type of the cached item.</typeparam>
-    ///
-    /// <param name="context">The generator initialization context.</param>
-    ///
-    /// <returns>An incremental value provider that provides a cached item.</returns>
-    public static IncrementalValueProvider<TItem> CompilationCached<TItem>(IncrementalGeneratorInitializationContext context)
-        where TItem : class, new()
-        => context.CompilationProvider.Select((_, _) => new TItem());
-
-    /// <summary>
     ///    Creates a provider that targets a syntax node.
     /// </summary>
     ///
