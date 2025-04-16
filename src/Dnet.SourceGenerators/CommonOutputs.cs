@@ -11,12 +11,12 @@ namespace Dnet.SourceGenerators;
 /// </summary>
 public static class CommonOutputs
 {
-    public static void BuildSymbolTargeted<TTarget, TBuilder>(SourceProductionContext context, (TTarget Target, TBuilder Builder) source)
+    public static void BuildSymbolTargeted<TTarget, TBuilder>(SourceProductionContext context, TTarget target)
         where TTarget : class, ISyntaxGeneratorTarget, ISymbolGeneratorTarget
-        where TBuilder : class, ISourceBuilder<TTarget>
+        where TBuilder : class, ISourceBuilder<TTarget>, new()
         => GeneratorTools.RobustExecute(
             context,
-            context => BuildSymbolTargeted(context, source.Builder, source.Target),
+            context => BuildSymbolTargeted(context, new TBuilder(), target),
             exception => GeneratorTools.CreateExceptionDiagnostic(exception, null));
 
     private static void BuildSymbolTargeted<TTarget, TBuilder>(SourceProductionContext context, TBuilder builder, TTarget target)

@@ -74,10 +74,8 @@ public static class CommonGenerators
 
         return new ActionAdaptingGenerator(context =>
         {
-            var pipeline = CommonProviders.Targets(context, nodePredicate, targetFactory, SymbolGeneratorTargetComparer.Instance)
-                .Combine(CommonProviders.CompilationCached<TBuilder>(context))
-                .WithComparer(SyntaxGeneratorTargetPipelineComparer<TTarget, TBuilder>.Instance);
-            context.RegisterSourceOutput(pipeline, CommonOutputs.BuildSymbolTargeted);
+            var pipeline = CommonProviders.Targets(context, nodePredicate, targetFactory, SymbolGeneratorTargetComparer.Instance);
+            context.RegisterSourceOutput(pipeline, CommonOutputs.BuildSymbolTargeted<TTarget, TBuilder>);
         });
     }
 
@@ -115,10 +113,8 @@ public static class CommonGenerators
 
         return new ActionAdaptingGenerator(context =>
         {
-            var pipeline = CommonProviders.TargetsWithAttribute(context, fullyQualifiedMetadataName, nodePredicate, targetFactory, SymbolGeneratorTargetComparer.Instance)
-                .Combine(CommonProviders.CompilationCached<TBuilder>(context))
-                .WithComparer(SyntaxGeneratorTargetPipelineComparer<TTarget, TBuilder>.Instance);
-            context.RegisterSourceOutput(pipeline, CommonOutputs.BuildSymbolTargeted);
+            var pipeline = CommonProviders.TargetsWithAttribute(context, fullyQualifiedMetadataName, nodePredicate, targetFactory, SymbolGeneratorTargetComparer.Instance);
+            context.RegisterSourceOutput(pipeline, CommonOutputs.BuildSymbolTargeted<TTarget, TBuilder>);
         });
     }
 
