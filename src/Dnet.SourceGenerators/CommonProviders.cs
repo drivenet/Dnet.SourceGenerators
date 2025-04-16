@@ -92,7 +92,7 @@ public static class CommonProviders
         where TTarget : class
         where TComparer : class, IEqualityComparer<TTarget>
         => provider
-            .Where(target => target is not null)!
+            .WhereNotNull()
             .WithComparer(comparer)
             .Collect()
             .SelectMany((targets, _) => targets.Distinct(comparer));
