@@ -12,10 +12,6 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <ItemGroup Label="SourceGeneratorDependencies">
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
-  </ItemGroup>
-
   <ItemGroup Label="TestInternalsVisibleTo">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
         <_Parameter1>$(AssemblyName).Tests</_Parameter1>
