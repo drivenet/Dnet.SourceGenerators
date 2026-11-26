@@ -1,5 +1,15 @@
 <Project>
-  <PropertyGroup Label="NetCoreProjectSettings" Condition="'$(TargetFramework)' == '$(ApplicationTargetFramework)'">
+  <PropertyGroup Label="NetCoreProjectSettings" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1'))">
     <NoWarn>$(NoWarn);CA2007</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Label="CombinedMultiTargetingProjectSettings" Condition="$(TargetFrameworks.Contains('$(LegacyTargetFramework)'))">
+    <NoWarn>$(NoWarn);CA1510;CA1511;CA1512;CA1513</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Label="ExeOutputSettings" Condition="'$(OutputType)' == 'Exe'">
+    <PublishDocumentationFiles>false</PublishDocumentationFiles>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
+    <CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
   </PropertyGroup>
 </Project>

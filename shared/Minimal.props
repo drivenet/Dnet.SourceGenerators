@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup Label="TopLevelPathDefaults">
     <DnetSharedPath Condition="'$(DnetSharedPath)' == ''">$(MSBuildThisFileDirectory)</DnetSharedPath>
   </PropertyGroup>
@@ -6,9 +6,8 @@
   <PropertyGroup Label="AvailableTargetFrameworks">
     <LegacyTargetFramework>net472</LegacyTargetFramework>
     <LegacyTargetFrameworkVersion>v4.7.2</LegacyTargetFrameworkVersion>
-    <ApplicationTargetFramework>net8.0</ApplicationTargetFramework>
+    <ApplicationTargetFramework>net10.0</ApplicationTargetFramework>
     <GeneratorTargetFramework>net472</GeneratorTargetFramework>
-    <BeforeTargetFrameworkInferenceTargets>$(DnetSharedPath)/Runtime.targets</BeforeTargetFrameworkInferenceTargets> <!-- $(DnetSharedPath)/ prefix added to prevent build fail -->
   </PropertyGroup>
 
   <PropertyGroup Label="MinimalProjectSettings">
@@ -18,8 +17,13 @@
     <Description>-</Description>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>latest</LangVersion>
+    <RollForward>latestMajor</RollForward>
     <Configurations>$(Configurations);Integration</Configurations>
     <DebugType>embedded</DebugType>
+    <Deterministic>true</Deterministic>
+    <EnableSourceLink>false</EnableSourceLink>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <WarningsAsErrors>$(WarningsAsErrors);CS8073;nullable</WarningsAsErrors>
@@ -28,13 +32,14 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ShowMessageForImplicitlySkipAnalyzers>false</ShowMessageForImplicitlySkipAnalyzers>
     <Features>strict</Features>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <OptionalWarnings>CS1572;CS1573;CS1574;CS1711;CS1712;CS1734;CS1735;SA1107;SA1116;SA1117;SA1201;SA1202;SA1203;SA1214;SA1402</OptionalWarnings>
+    <OptionalWarnings>CS1572;CS1573;CS1574;CS1711;CS1712;CS1734;CS1735;CA1513;SA1107;SA1116;SA1117;SA1201;SA1202;SA1203;SA1214;SA1402;SYSLIB1045</OptionalWarnings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <BeforeTargetFrameworkInferenceTargets>$(MSBuildThisFileDirectory)\Runtime.targets</BeforeTargetFrameworkInferenceTargets>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <PropertyGroup Label="DevelopmentProjectSettings" Condition="'$(Configuration)' != 'Integration'">
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-    <NoWarn>$(NoWarn);$(OptionalWarnings)</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="ProductionProjectSettings" Condition="'$(Configuration)' != 'Debug'">
@@ -44,6 +49,7 @@
 
   <PropertyGroup Label="IntegrationProjectSettings" Condition="'$(Configuration)' == 'Integration'">
     <Optimize>true</Optimize>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup Label="MinimalAnalyzerFiles">
@@ -63,7 +69,7 @@
 
   <ItemGroup Label="MinimalAnalyzerReferences">
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" PrivateAssets="All" />
     <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.7.0-beta.1" PrivateAssets="All" />
     <PackageReference Include="ErrorProne.NET.Structs" Version="0.6.1-beta.1" PrivateAssets="All" />
   </ItemGroup>

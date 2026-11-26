@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="MinimalClassLibrary.props" />
 
   <ItemGroup Label="ClassLibraryAnalyzerFiles">
@@ -9,6 +9,6 @@
   </ItemGroup>
 
   <ItemGroup Label="ClassLibrarySourceGenerators">
-    <ProjectReference Include="$(DnetLibPath)\Dnet.Core.Generators\Dnet.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="$(DnetLibPath)\Dnet.Core.Generators\Dnet.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="All" />
   </ItemGroup>
 </Project>

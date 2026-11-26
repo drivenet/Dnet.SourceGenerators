@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="TestLibrary.props" />
 
   <PropertyGroup Label="SourceGeneratorTestLibraryProjectSettings">

@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="Default.props" />
 
   <PropertyGroup Label="ClassLibraryTargetFrameworks">
